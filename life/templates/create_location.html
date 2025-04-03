@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Location{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Add New Location</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group mb-3">
+            <label for="{{ form.location_name.id_for_label }}">Location Name:</label>
+            {{ form.location_name }}
+            {% if form.location_name.errors %}
+                <div class="text-danger">{{ form.location_name.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="{{ form.location_id.id_for_label }}">Location ID:</label>
+            {{ form.location_id }}
+            {% if form.location_id.errors %}
+                <div class="text-danger">{{ form.location_id.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">A unique identifier for this location</small>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="{{ form.district.id_for_label }}">District:</label>
+            {{ form.district }}
+            {% if form.district.errors %}
+                <div class="text-danger">{{ form.district.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="{{ form.nearest_railway_station.id_for_label }}">Nearest Railway Station:</label>
+                    {{ form.nearest_railway_station }}
+                    {% if form.nearest_railway_station.errors %}
+                        <div class="text-danger">{{ form.nearest_railway_station.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="{{ form.distance_from_railway_station.id_for_label }}">Distance (km):</label>
+                    {{ form.distance_from_railway_station }}
+                    {% if form.distance_from_railway_station.errors %}
+                        <div class="text-danger">{{ form.distance_from_railway_station.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="{{ form.nearest_airport.id_for_label }}">Nearest Airport:</label>
+                    {{ form.nearest_airport }}
+                    {% if form.nearest_airport.errors %}
+                        <div class="text-danger">{{ form.nearest_airport.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="{{ form.distance_from_airport.id_for_label }}">Distance (km):</label>
+                    {{ form.distance_from_airport }}
+                    {% if form.distance_from_airport.errors %}
+                        <div class="text-danger">{{ form.distance_from_airport.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Add Location</button>
+        <a href="{% url 'create_post' %}" class="btn btn-secondary">Back to Post Creation</a>
+    </form>
+</div>
+{% endblock %}

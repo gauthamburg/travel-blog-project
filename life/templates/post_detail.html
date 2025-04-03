@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    {% if post.image %}
+    <img src="{{ post.image }}" class="card-img-top" alt="{{ post.title }}">
+    {% endif %}
+    <div class="card-body">
+        <h1 class="card-title">{{ post.title }}</h1>
+        <h6 class="card-subtitle mb-3 text-muted">
+            Posted by <a href="{% url 'user_profile' post.user.username %}">{{ post.user.username }}</a> 
+            on {{ post.posted|date:"F d, Y" }}
+        </h6>
+        
+        <h5>Location: {{ post.location.location_name }}</h5>
+        <p><strong>District:</strong> {{ post.location.district }}</p>
+        <p><strong>Nearest Railway Station:</strong> {{ post.location.nearest_railway_station }} 
+            ({{ post.location.distance_from_railway_station }} km)</p>
+        <p><strong>Nearest Airport:</strong> {{ post.location.nearest_airport }} 
+            ({{ post.location.distance_from_airport }} km)</p>
+        
+        <hr>
+        
+        <div class="mt-4">
+            {{ post.content|linebreaks }}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Reviews</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="id_rating" class="form-label">Rating (1-5)</label>
+                <input type="number" name="rating" id="id_rating" min="1" max="5" class="form-control" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_comment" class="form-label">Comment</label>
+                <textarea name="comment" id="id_comment" class="form-control" rows="3" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Add Review</button>
+        </form>
+        
+        <hr>
+        
+        {% for review in reviews %}
+        <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5>{{ review.user_id.username }}</h5>
+                <small class="text-muted">{{ review.posted|date:"F d, Y" }}</small>
+            </div>
+            <div class="mb-1">
+                Rating: 
+                {% for i in "12345" %}
+                    {% if forloop.counter <= review.rating %}
+                    <span class="text-warning">★</span>
+                    {% else %}
+                    <span class="text-secondary">☆</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <p>{{ review.comment }}</p>
+            <hr>
+        </div>
+        {% empty %}
+        <p>No reviews yet. Be the first to review!</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

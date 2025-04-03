@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Travel Posts</h1>
+
+<div class="row">
+    {% for post in travel_posts %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            {% if post.image %}
+            <img src="{{ post.image }}" class="card-img-top" alt="{{ post.title }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ post.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ post.location.location_name }}</h6>
+                <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Posted by {{ post.user.username }} on {{ post.posted|date:"F d, Y" }}</small>
+                <a href="{% url 'post_detail' post.id %}" class="btn btn-sm btn-primary float-end">Read More</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No travel posts available. <a href="{% url 'create_post' %}">Create one?</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

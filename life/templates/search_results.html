@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results: {{ query }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Search Results for "{{ query }}"</h2>
+    
+    <form method="get" action="{% url 'search' %}" class="mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" name="query" value="{{ query }}" class="form-control" placeholder="Search">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="search_type" class="form-select">
+                    <option value="all" {% if search_type == 'all' %}selected{% endif %}>All</option>
+                    <option value="users" {% if search_type == 'users' %}selected{% endif %}>Users</option>
+                    <option value="posts" {% if search_type == 'posts' %}selected{% endif %}>Posts</option>
+                    <option value="locations" {% if search_type == 'locations' %}selected{% endif %}>Locations</option>
+                </select>
+            </div>
+        </div>
+    </form>
+    
+    {% if not query %}
+        <div class="alert alert-info">Enter a search term to begin.</div>
+    {% else %}
+        {% if search_type == 'all' or search_type == 'users' %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Users</h3>
+                </div>
+                <div class="card-body">
+                    {% if results.users %}
+                        <div class="list-group">
+                            {% for user in results.users %}
+                                <a href="{% url 'user_profile' user.username %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ user.name }}</h5>
+                                        <small>Username: {{ user.username }}</small>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>No users found matching "{{ query }}".</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+        
+        {% if search_type == 'all' or search_type == 'posts' %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Travel Posts</h3>
+                </div>
+                <div class="card-body">
+                    {% if results.posts %}
+                        <div class="row">
+                            {% for post in results.posts %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        {% if post.image %}
+                                            <img src="{{ post.image }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title }}</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">
+                                                {{ post.location.location_name }}, {{ post.location.district }}
+                                            </h6>
+                                            <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+                                            <a href="{% url 'post_detail' post.id %}" class="btn btn-primary">View Post</a>
+                                        </div>
+                                        <div class="card-footer">
+                                            <small class="text-muted">
+                                                Posted by <a href="{% url 'user_profile' post.user.username %}">{{ post.user.username }}</a>
+                                                on {{ post.posted|date:"F d, Y" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>No posts found matching "{{ query }}".</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+        
+        {% if search_type == 'all' or search_type == 'locations' %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Locations</h3>
+                </div>
+                <div class="card-body">
+                    {% if results.locations %}
+                        <div class="list-group">
+                            {% for location in results.locations %}
+                                <div class="list-group-item">
+                                    <h5 class="mb-1">{{ location.location_name }}</h5>
+                                    <p class="mb-1">District: {{ location.district }}</p>
+                                    <p class="mb-1">
+                                        <i class="fas fa-train"></i> {{ location.nearest_railway_station }} ({{ location.distance_from_railway_station }} km)
+                                        <br>
+                                        <i class="fas fa-plane"></i> {{ location.nearest_airport }} ({{ location.distance_from_airport }} km)
+                                    </p>
+                                    <div class="mt-2">
+                                        <a href="{% url 'search' %}?query={{ location.location_name }}&search_type=posts" class="btn btn-sm btn-primary">
+                                            Find Posts for this Location
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>No locations found matching "{{ query }}".</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

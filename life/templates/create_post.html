@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Travel Post{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Create New Travel Post</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group mb-3">
+            <label for="{{ form.title.id_for_label }}">Title:</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="text-danger">{{ form.title.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="{{ form.location.id_for_label }}">Location:</label>
+            {{ form.location }}
+            {% if form.location.errors %}
+                <div class="text-danger">{{ form.location.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">
+                <a href="{% url 'create_location' %}">Add a new location</a> if it's not in the list.
+            </small>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="{{ form.image.id_for_label }}">Image URL:</label>
+            {{ form.image }}
+            {% if form.image.errors %}
+                <div class="text-danger">{{ form.image.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">Provide a URL to an image of this location.</small>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="{{ form.content.id_for_label }}">Content:</label>
+            {{ form.content }}
+            {% if form.content.errors %}
+                <div class="text-danger">{{ form.content.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Create Post</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
